@@ -2,14 +2,17 @@ import React from "react";
 import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 
-export default GoalItem = ({ item, delFn, nav }) => {
+export default GoalItem = ({ item, funcs, nav }) => {
   return (
     <TouchableOpacity
       style={styles.container}
-      onPress={() => nav.navigate("GoalDetail", item)}
+      onPress={() => nav.navigate("GoalDetail", { detail: item, funcs: funcs })}
     >
       <Text style={styles.title}>{item.goal}</Text>
-      <TouchableOpacity style={styles.delete} onPress={() => delFn(item.key)}>
+      <TouchableOpacity
+        style={styles.delete}
+        onPress={() => funcs[1](item.key)}
+      >
         <AntDesign name="close" size={24} color="#aaa" />
       </TouchableOpacity>
     </TouchableOpacity>
@@ -24,14 +27,15 @@ const styles = StyleSheet.create({
     paddingLeft: 20,
     marginBottom: 20,
     backgroundColor: "#eee",
+    borderRadius: 15,
     shadowOffset: { width: 0, height: 0 },
-    shadowColor: "#eee",
+    shadowColor: "#aaa",
     shadowOpacity: 0.5,
     shadowRadius: 2
   },
   title: {
     flex: 10,
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: "500"
   },
   edit: {

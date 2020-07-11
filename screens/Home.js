@@ -7,7 +7,8 @@ import {
   Button,
   FlatList,
   TextInput,
-  TouchableOpacity
+  TouchableOpacity,
+  Alert
 } from "react-native";
 import Header from "../components/Header";
 import GoalItem from "../components/GoalItem";
@@ -15,18 +16,26 @@ import GoalItem from "../components/GoalItem";
 const goalsList = [
   {
     key: "2",
-    goal: "Create a React Native app"
+    goal: "Create a React Native app",
+    category: "Work",
+    achieveBy: "11 July 2020",
+    notes: "This is the notes section",
+    reminder: "Remind 3 days before"
   },
   {
     key: "1",
-    goal: "Learn React Native"
+    goal: "Learn React Native",
+    category: "Work",
+    achieveBy: "11 July 2020",
+    notes: "This is the notes section",
+    reminder: "Remind 3 days before"
   }
 ];
 
 export default function Home({ navigation }) {
   const [goals, setGoals] = useState(goalsList);
   const [triggerAddInp, setTriggerAddInp] = useState(false);
-  const [input, setInput] = useState(null);
+  const [input, setInput] = useState("");
 
   const inputHandler = inp => {
     setInput(inp);
@@ -36,17 +45,43 @@ export default function Home({ navigation }) {
     let newKey = Math.random().toString();
     let newGoal = {
       key: newKey,
-      goal: input
+      goal: input,
+      category: "Work",
+      achieveBy: "11 July 2020",
+      notes: "This is the notes section",
+      reminder: "Remind 3 days before"
     };
 
-    setGoals(prevGoals => {
-      return [newGoal, ...prevGoals];
-    });
-    setTriggerAddInp(false);
+    if (input.length > 0) {
+      setGoals(prevGoals => {
+        return [newGoal, ...prevGoals];
+      });
+      setInput("");
+      setTriggerAddInp(false);
+    } else {
+      Alert.alert("Oops!", "Goal item cannot be empty. Try again.", [
+        { text: "Ok", onPress: () => console.log("Closing alert...") }
+      ]);
+    }
   };
 
   const cancelAdd = () => {
     setTriggerAddInp(false);
+  };
+
+  const editGoal = (key, valueToEdit, value) => {
+    console.log("Editing key: " + key);
+    // retrieve the goal based on key
+    const index = goals.findIndex(goal => goal.key == key);
+    const newGoals = [...goals];
+    // make changes
+    const goal = newGoals[index];
+    goal[valueToEdit] = value;
+    console.log("New Goal: ");
+    console.log(goal);
+    setGoals(newGoals);
+    console.log("All GOals: ");
+    console.log(goals);
   };
 
   const delGoal = key => {
@@ -89,7 +124,12 @@ export default function Home({ navigation }) {
                   // <TouchableOpacity
                   //   onPress={() => navigation.navigate("GoalDetail", item)}
                   // >
-                  <GoalItem item={item} delFn={delGoal} nav={navigation} />
+                  <GoalItem
+                    key={item.key}
+                    item={item}
+                    funcs={[editGoal, delGoal]}
+                    nav={navigation}
+                  />
                   // </TouchableOpacity>
                 );
               }}
